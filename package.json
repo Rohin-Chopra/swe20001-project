@@ -1,0 +1,23 @@
+{
+  "name": "swe20001-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "start:dev":"concurrently \"nodemon server/server.js\" \"npm start --prefix client\"",
+    "heroku-postbuild": "chmod u+x ./deploy.sh && ./deploy.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rohin1212/swe20001-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rohin1212/swe20001-project/issues"
+  },
+  "homepage": "https://github.com/Rohin1212/swe20001-project#readme"
+}
