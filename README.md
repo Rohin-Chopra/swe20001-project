@@ -1,18 +1,18 @@
 # swe20001-project
 
 ## Installation
-Following commnands install the neccesary dependencies.
+Following commands install the necessary dependencies.
 ```
-npm i -g nodemon concurrently
+npm i -g nodemon concurrently yarn
 cd client 
-npm i
+yarn
 cd ../server
-npm i
+yarn
 ```
 ## Running the project locally
 Run the following command from the root of the project directory
 ```
-npm run start:dev
+yarn run start:dev
 ```
 This will start both the frontend/react and backend/express server at the same time,
 
