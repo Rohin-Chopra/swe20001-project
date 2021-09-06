@@ -10,7 +10,7 @@ cd ../server
 npm i
 ```
 ## Running the project locally
-Run the following command from the root of the project directoru
+Run the following command from the root of the project directory
 ```
 npm run start:dev
 ```
