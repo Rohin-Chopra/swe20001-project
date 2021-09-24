@@ -1,5 +1,6 @@
 const createError = require('http-errors')
 const express = require('express')
+const cors = require('cors')
 const path = require('path')
 const logger = require('morgan')
 
@@ -8,15 +9,20 @@ const salesRouter = require('./routes/sale')
 
 const app = express()
 
-
+app.use(cors())
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, './public')))
 
+
 app.use('/api/items', itemsRouter)
 app.use('/api/sales', salesRouter)
-
+app.use('/api', (req, res, next) => {
+  res.status(200).json({
+    message: 'Welcome to the API'
+  })
+})
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404))
