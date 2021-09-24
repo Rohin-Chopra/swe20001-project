@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+
+  mongo_express:
+    image: mongo-express:latest
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    ports:
+      - "8081:8081"
+    restart: on-failure
+    depends_on:
+      - mongodb
+
+  server:
+    image: swe20001-server
+    build:
+      context: server
+      dockerfile: ./Dockerfile.dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - 5000:5000
+    volumes:
+      - ./server:/usr/src/app
+      - nodemodules:/src/node_modules
+    depends_on:
+      - mongodb
+
+volumes:
+  nodemodules: {}
+  mongo-data:
+    driver: local

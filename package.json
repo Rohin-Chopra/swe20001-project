@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
-    "start:dev":"concurrently \"nodemon server/server.js\" \"npm start --prefix client\"",
+    "start": "npm start --prefix server",
+    "both":"concurrently \"nodemon server/server.js\" \"npm start --prefix client\"",
+    "client":"npm start --prefix client",
     "heroku-postbuild": "chmod u+x ./deploy.sh && ./deploy.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
