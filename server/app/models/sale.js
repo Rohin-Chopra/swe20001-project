@@ -1,17 +1,21 @@
 const mongoose = require('mongoose')
-const { ItemSchema } = require('./item')
 
-const schema = new mongoose.Schema({
-  quantity: String,
-  items: [
-    {
-      ...ItemSchema,
-      quantity: Number
-    }
-  ]
-})
+const schema = new mongoose.Schema(
+  {
+    items: [
+      {
+        item: { type: mongoose.Types.ObjectId, ref: 'Item' },
+        quantity: Number
+      }
+    ],
+    customer: { type: mongoose.Types.ObjectId, ref: 'Customer' }
+  },
+  {
+    timestamps: true
+  }
+)
 
 const Sale = mongoose.model('Sale', schema)
 
-exports.SaleSchema = schema
-module.exports = Sale
+exports.saleSchema = schema
+exports.Sale = Sale

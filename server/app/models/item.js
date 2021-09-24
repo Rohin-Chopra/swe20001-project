@@ -1,11 +1,18 @@
 const mongoose = require('mongoose')
 
-const schema = new mongoose.Schema({
-  name: 'string',
-  description: 'string'
-})
+const schema = new mongoose.Schema(
+  {
+    name: String,
+    description: String,
+    price: Number,
+    stock: Number
+  },
+  {
+    timestamps: true
+  }
+)
 
 const Item = mongoose.model('Item', schema)
 
-exports.ItemSchema = schema
-module.exports = Item
+exports.itemSchema = schema
+exports.Item = Item
