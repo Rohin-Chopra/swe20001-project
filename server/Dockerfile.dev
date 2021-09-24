@@ -3,7 +3,8 @@ RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 COPY package*.json ./
 USER node
-RUN npm install
+RUN npm i -g yarn
+RUN yarn
 COPY . ./
 EXPOSE 5000
 CMD [ "npm", "run","dev" ]
