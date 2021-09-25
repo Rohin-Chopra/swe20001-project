@@ -1,5 +1,4 @@
 const asyncHandler = require('express-async-handler')
-const { Customer } = require('./../models/item')
 const { Item } = require('./../models/item')
 
 exports.getAllItems = asyncHandler(async (req, res, next) => {

@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler')
 const Customer = require('../models/customer')
-const { Item } = require('./../models/item')
 const { Sale } = require('./../models/sale')
 
 exports.getAllSales = asyncHandler(async (req, res, next) => {
@@ -44,7 +43,7 @@ exports.addSale = asyncHandler(async (req, res, next) => {
   await Customer.updateOne({ email: req.body.customer.email }, req.body.customer, { upsert: true })
   const customer = await Customer.findOne({ email: req.body.customer.email })
   req.body.customer = customer.id
-  
+
   let sale = new Sale(req.body)
   await sale.save()
   sale = await Sale.findById(sale.id).populate('items.item').populate('customer')

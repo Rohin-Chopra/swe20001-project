@@ -4,6 +4,8 @@ const cors = require('cors')
 const path = require('path')
 const logger = require('morgan')
 
+const auth = require('./auth')
+const authRouter = require('./routes/auth');
 const itemsRouter = require('./routes/item')
 const salesRouter = require('./routes/sale')
 
@@ -14,8 +16,9 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, './public')))
+app.use(auth.initialise())
 
-
+app.use('/api/auth', authRouter)
 app.use('/api/items', itemsRouter)
 app.use('/api/sales', salesRouter)
 app.use('/api', (req, res, next) => {
