@@ -29,8 +29,8 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - ./server:/usr/src/app
-      - nodemodules:/src/node_modules
+      - ./server:/workspace
+      - nodemodules:/workspace/node_modules
     depends_on:
       - mongodb
 

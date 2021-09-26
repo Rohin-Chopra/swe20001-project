@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const auth = require('../auth');
 const {
   getAllItems,
   getItem,
@@ -7,6 +8,8 @@ const {
   updateItem,
   deleteItem
 } = require('../controllers/item')
+
+router.use(auth.verifyAuthed())
 
 router.route('/')
   .get(getAllItems)
