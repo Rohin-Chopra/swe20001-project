@@ -94,3 +94,9 @@ module.exports.signUser = async (user) => {
     }, TOKEN_SECRET)
   };
 };
+
+module.exports.verifyAuthed = () => {
+  return passport.authenticate('user', {
+    session: false
+  });
+};
