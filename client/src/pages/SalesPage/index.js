@@ -38,7 +38,7 @@ export default class SalesPage extends Component {
 
   getItemsSoldThisMonth() {
     return this.getSalesThisMonth()
-      .map((sale) => sale.items.map((item) => item.quantity))
+      .map((sale) => sale.items.filter((item) => item.item).map((item) => item.quantity))
       .flat()
       .reduce((prev, curr) => prev + curr, 0)
   }
@@ -62,7 +62,7 @@ export default class SalesPage extends Component {
 
   getTopSellingItemThisMonth() {
     const items = this.getSalesThisMonth()
-      .map((sale) => sale.items)
+      .map((sale) => sale.items.filter((item) => item.item))
       .flat();
     if (items.length === 0) {
       return 'N/A';
@@ -72,7 +72,7 @@ export default class SalesPage extends Component {
       items.sort((a, b) => b.quantity - a.quantity);
     }
 
-    return items[0];
+    return items[0].item.name;
   }
 
   render() {
@@ -124,33 +124,36 @@ export default class SalesPage extends Component {
       );
     }
 
-    return sales.map((sale) => (
-      <tr key={sale._id}>
-        <td>
-          {formatDate(sale.createdAt)}
-        </td>
-        <td>
-          {sale.customer.name}
-        </td>
-        <td>
-          {sale.customer.email}
-        </td>
-        <td>
-          {sale.items.length > 0 ? (
-            sale.items.map((item) => <div>- {item.name}</div>)
-          ) : 'None'}
-        </td>
-        <td>
-          <LinkContainer to={`/sales/${sale._id}`}>
-            <Button variant="warning">
-              Edit
+    return sales.map((sale) => {
+      const items = sale.items.filter((item) => item.item);
+      return (
+        <tr key={sale._id}>
+          <td>
+            {formatDate(sale.createdAt)}
+          </td>
+          <td>
+            {sale.customer.name}
+          </td>
+          <td>
+            {sale.customer.email}
+          </td>
+          <td>
+            {items.length > 0 ? (
+              items.map((item) => <div key={item.item._id}>{item.item.name} x {item.quantity}</div>)
+            ) : 'None'}
+          </td>
+          <td>
+            <LinkContainer to={`/sales/${sale._id}`}>
+              <Button variant="warning">
+                Edit
+              </Button>
+            </LinkContainer>
+            <Button onClick={() => this.deleteSale(sale)} variant="danger">
+              Delete
             </Button>
-          </LinkContainer>
-          <Button onClick={() => this.deleteSale(sale)} variant="danger">
-            Delete
-          </Button>
-        </td>
-      </tr>
-    ));
+          </td>
+        </tr>
+      );
+    });
   }
 }

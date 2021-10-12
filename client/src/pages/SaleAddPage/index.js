@@ -10,8 +10,19 @@ class SaleAddPage extends Component {
     customerName: '',
     inFlight: false,
     items: [],
-    selectedItemIds: []
+    itemsInFlight: true
   };
+
+  async componentDidMount() {
+    const { data: { items } } = await this.props.fetchApi('GET', 'items');
+    this.setState({
+      items: items.map((item) => ({
+        ...item,
+        quantity: 0
+      })),
+      itemsInFlight: false
+    });
+  }
 
   async handleSubmit(event) {
     event.preventDefault();
@@ -24,18 +35,24 @@ class SaleAddPage extends Component {
         email: this.state.customerEmail,
         name: this.state.customerName
       },
-      items: this.state.selectedItemIds
+      items: this.state.items
+        .filter((item) => item.quantity > 0)
+        .map((item) => ({
+          item: item._id,
+          quantity: item.quantity
+        }))
     });
     this.props.history.push('/sales');
   }
 
   isDisabled() {
-    return !this.state.customerName || !this.state.customerEmail || this.inFlight;
+    return !this.state.customerName || !this.state.customerEmail || this.state.inFlight;
   }
 
   render() {
+    const { customerEmail, customerName, items, itemsInFlight } = this.state;
     return (
-      <div className="SalesAddPage">
+      <div className="SaleAddPage">
         <h1>Add Sale</h1>
         <Form onSubmit={this.handleSubmit}>
           <Form.Group className="mb-3">
@@ -44,7 +61,7 @@ class SaleAddPage extends Component {
               onChange={(event) => this.updateField('customerName', event)}
               placeholder="Customer Name"
               type="text"
-              value={this.state.customerName}
+              value={customerName}
             />
           </Form.Group>
 
@@ -54,16 +71,29 @@ class SaleAddPage extends Component {
               onChange={(event) => this.updateField('customerEmail', event)}
               placeholder="Customer Email"
               type="email"
-              value={this.state.customerEmail}
+              value={customerEmail}
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label style={{ display: 'block' }}>Items</Form.Label>
-            <Form.Text className="text-muted">
-              This is not supported yet.
-            </Form.Text>
-          </Form.Group>
+          <h2>Items</h2>
+          {itemsInFlight ? 'Loading...' : items.map((item) => {
+            return (
+              <Form.Group className="mb-3" key={item._id}>
+                <Form.Label style={{ display: 'block' }}>{item.name}</Form.Label>
+                <Form.Control
+                  onChange={(event) => {
+                    item.quantity = parseInt(event.target.value, 10) || '';
+                    this.setState({
+                      items
+                    });
+                  }}
+                  placeholder="Quantity"
+                  type="number"
+                  value={item.quantity}
+                />
+              </Form.Group>
+            );
+          })}
 
           <Button disabled={this.isDisabled()} type="submit" variant="primary">
             Submit

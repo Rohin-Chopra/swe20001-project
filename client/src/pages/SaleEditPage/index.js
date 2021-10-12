@@ -3,27 +3,32 @@ import { Component } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router';
 
-class SalesEditPage extends Component {
+class SaleEditPage extends Component {
   handleSubmit = this.handleSubmit.bind(this);
   state = {
     customerEmail: '',
     customerName: '',
-    inFlight: false,
+    inFlight: true,
     items: [],
-    selectedItemIds: []
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    const { data: { sale } } = await this.props.fetchApi('GET', `sales/${this.getId()}`);
     this.setState({
-      inFlight: true
-    }, async () => {
-      const { data: { sale } } = await this.props.fetchApi('GET', `sales/${this.getId()}`);
-      this.setState({
-        customerEmail: sale.customer.email,
-        customerName: sale.customer.name,
-        inFlight: false,
-        selectedItemIds: sale.items.map((item) => item.id)
-      });
+      customerEmail: sale.customer.email,
+      customerName: sale.customer.name
+    });
+
+    const { data: { items } } = await this.props.fetchApi('GET', 'items');
+    this.setState({
+      items: items.map((item) => {
+        const saleItem = sale.items.find((saleItem) => saleItem.item && saleItem.item._id === item._id);
+        return {
+          ...item,
+          quantity: (saleItem && saleItem.quantity) || 0
+        };
+      }),
+      inFlight: false,
     });
   }
 
@@ -39,40 +44,60 @@ class SalesEditPage extends Component {
       inFlight: true
     });
     await this.props.fetchApi('PUT', `sales/${this.getId()}`, {
-      items: this.state.selectedItemIds
+      items: this.state.items
+        .filter((item) => item.quantity > 0)
+        .map((item) => ({
+          item: item._id,
+          quantity: item.quantity
+        }))
     });
     this.props.history.push('/sales');
   }
 
   isDisabled() {
-    return !this.state.customerName || !this.state.customerEmail || this.inFlight;
+    return !this.state.customerName || !this.state.customerEmail;
   }
 
   render() {
-    if (this.state.inFlight) {
+    const { customerEmail, customerName, inFlight, items } = this.state;
+
+    if (inFlight) {
       return 'Loading...';
     }
 
     return (
-      <div className="SalesEditPage">
+      <div className="SaleEditPage">
         <h1>Edit Sale</h1>
         <Form onSubmit={this.handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Customer Name</Form.Label>
-            <div>{this.state.customerName}</div>
+            <div>{customerName}</div>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Customer Email</Form.Label>
-            <div>{this.state.customerEmail}</div>
+            <div>{customerEmail}</div>
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label style={{ display: 'block' }}>Items</Form.Label>
-            <Form.Text className="text-muted">
-              This is not supported yet.
-            </Form.Text>
-          </Form.Group>
+          <h2>Items</h2>
+          {items.map((item) => {
+            return (
+              <Form.Group className="mb-3" key={item._id}>
+                <Form.Label style={{ display: 'block' }}>{item.name}</Form.Label>
+                <Form.Control
+                  onChange={(event) => {
+                    item.quantity = parseInt(event.target.value, 10) || '';
+                    this.setState({
+                      items
+                    });
+                  }}
+                  placeholder="Quantity"
+                  type="number"
+                  value={item.quantity}
+                />
+              </Form.Group>
+            );
+          })}
 
           <Button disabled={this.isDisabled()} type="submit" variant="primary">
             Submit
@@ -89,4 +114,4 @@ class SalesEditPage extends Component {
   }
 };
 
-export default withRouter(SalesEditPage);
+export default withRouter(SaleEditPage);

@@ -22,6 +22,9 @@ export default class NavBar extends Component {
               <LinkContainer exact to="/">
                 <Nav.Link>Home</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/items">
+                <Nav.Link>Items</Nav.Link>
+              </LinkContainer>
               <LinkContainer to="/sales">
                 <Nav.Link>Sales</Nav.Link>
               </LinkContainer>

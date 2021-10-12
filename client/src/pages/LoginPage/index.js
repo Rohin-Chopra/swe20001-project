@@ -35,7 +35,7 @@ export default class LoginPage extends Component {
   }
 
   isDisabled() {
-    return !this.state.email || !this.state.password || this.inFlight;
+    return !this.state.email || !this.state.password || this.state.inFlight;
   }
 
   render() {
