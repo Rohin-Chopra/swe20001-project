@@ -28,6 +28,11 @@ export default class NavBar extends Component {
               <LinkContainer to="/sales">
                 <Nav.Link>Sales</Nav.Link>
               </LinkContainer>
+              {user.isAdmin && (
+                <LinkContainer to="/users">
+                  <Nav.Link>Users</Nav.Link>
+                </LinkContainer>
+              )}
             </Nav>
             <Nav>
               Signed in as: {user.name}

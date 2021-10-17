@@ -5,7 +5,8 @@ const schema = new mongoose.Schema(
     name: String,
     description: String,
     price: Number,
-    stock: Number
+    stock: Number,
+    category: String
   },
   {
     timestamps: true

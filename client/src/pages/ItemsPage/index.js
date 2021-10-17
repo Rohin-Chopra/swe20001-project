@@ -9,7 +9,8 @@ import formatDate from 'utils/formatDate';
 export default class ItemsPage extends Component {
   state = {
     inFlight: true,
-    items: []
+    items: [],
+    sort: ['name', false]
   };
 
   componentDidMount() {
@@ -47,10 +48,23 @@ export default class ItemsPage extends Component {
           <thead>
             <tr>
               <th>Created At</th>
-              <th>Name</th>
+              <th className="sortable" onClick={() => this.setSort('name')}>
+                Name
+                {this.renderSort('name')}
+              </th>
               <th>Description</th>
-              <th>Price</th>
-              <th>Stock</th>
+              <th className="sortable" onClick={() => this.setSort('price')}>
+                Price
+                {this.renderSort('price')}
+              </th>
+              <th className="sortable" onClick={() => this.setSort('stock')}>
+                Stock
+                {this.renderSort('stock')}
+              </th>
+              <th className="sortable" onClick={() => this.setSort('category')}>
+                Category
+                {this.renderSort('category')}
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -63,7 +77,7 @@ export default class ItemsPage extends Component {
   }
 
   renderSales() {
-    const { inFlight, items } = this.state;
+    const { inFlight, items, sort: [key, descending] } = this.state;
 
     if (inFlight) {
       return (
@@ -81,7 +95,19 @@ export default class ItemsPage extends Component {
       );
     }
 
-    return items.map((item) => (
+    const sortedItems = [...items].sort((a, b) => {
+      if (a[key] > b[key]) {
+        return descending ? -1 : 1;
+      }
+
+      if (b[key] > a[key]) {
+        return descending ? 1 : -1;
+      }
+
+      return 0;
+    });
+
+    return sortedItems.map((item) => (
       <tr key={item._id}>
         <td>
           {formatDate(item.createdAt)}
@@ -99,6 +125,9 @@ export default class ItemsPage extends Component {
           {item.stock}
         </td>
         <td>
+          {item.category}
+        </td>
+        <td>
           <LinkContainer to={`/items/${item._id}`}>
             <Button variant="warning">
               Edit
@@ -110,5 +139,23 @@ export default class ItemsPage extends Component {
         </td>
       </tr>
     ));
+  }
+
+  renderSort(key) {
+    const { sort: [currentKey, descending] } = this.state;
+    return currentKey === key && (
+      <span>
+        &nbsp;
+        {descending ? <span>&darr;</span> : <span>&uarr;</span>}
+      </span>
+    );
+  }
+
+  setSort(key) {
+    const { sort: [currentKey, descending] } = this.state;
+
+    this.setState({
+      sort: [key, key === currentKey && !descending]
+    });
   }
 }

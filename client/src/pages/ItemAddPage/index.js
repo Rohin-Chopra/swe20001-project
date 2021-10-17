@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 class ItemAddPage extends Component {
   handleSubmit = this.handleSubmit.bind(this);
   state = {
+    category: '',
     description: '',
     inFlight: false,
     name: '',
@@ -20,6 +21,7 @@ class ItemAddPage extends Component {
       inFlight: true
     });
     await this.props.fetchApi('POST', 'items', {
+      category: this.state.category,
       description: this.state.description,
       name: this.state.name,
       price: this.state.price,
@@ -74,6 +76,16 @@ class ItemAddPage extends Component {
               placeholder="Stock"
               type="number"
               value={this.state.stock}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Category</Form.Label>
+            <Form.Control
+              onChange={(event) => this.updateField('category', event)}
+              placeholder="Category"
+              type="text"
+              value={this.state.category}
             />
           </Form.Group>
 

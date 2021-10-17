@@ -1,7 +1,13 @@
 .RecordTable {
-  padding-top: 20px;
+  &:not(.noPadding) {
+    padding-top: 20px;
+  }
 
   > table {
     vertical-align: middle;
+
+    > thead > tr > th.sortable {
+      cursor: pointer;
+    }
   }
 }

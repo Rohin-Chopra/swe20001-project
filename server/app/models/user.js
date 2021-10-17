@@ -4,7 +4,8 @@ const schema = new mongoose.Schema(
   {
     name: String,
     email: String,
-    passwordHash: String
+    passwordHash: String,
+    isAdmin: Boolean
   },
   {
     timestamps: true

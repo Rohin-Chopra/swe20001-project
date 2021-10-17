@@ -8,6 +8,7 @@ const auth = require('./auth')
 const authRouter = require('./routes/auth');
 const itemsRouter = require('./routes/item')
 const salesRouter = require('./routes/sale')
+const usersRouter = require('./routes/user')
 
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(auth.initialise())
 app.use('/api/auth', authRouter)
 app.use('/api/items', itemsRouter)
 app.use('/api/sales', salesRouter)
+app.use('/api/users', usersRouter)
 app.use('/api', (req, res, next) => {
   res.status(200).json({
     message: 'Welcome to the API'

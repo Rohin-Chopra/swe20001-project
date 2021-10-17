@@ -33,7 +33,8 @@ passport.use(new LocalStrategy({
     done(null, {
       id: user._id.toString(),
       name: user.name,
-      email: user.email
+      email: user.email,
+      isAdmin: user.isAdmin
     });
   } catch (error) {
     console.error('error while authenticating user', {
@@ -45,19 +46,22 @@ passport.use(new LocalStrategy({
 
 passport.use('user', new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  passReqToCallback: true,
   secretOrKey: TOKEN_SECRET
-}, async (payload, done) => {
+}, async (req, payload, done) => {
   try {
     const user = await User.findById(payload.id);
-    done(null, {
+    done(null, user && (!req.forceAdmin || user.isAdmin ? {
       id: user._id.toString(),
       name: user.name,
-      email: user.email
-    });
+      email: user.email,
+      isAdmin: user.isAdmin
+    } : false));
   } catch (error) {
     console.error('error while verifying user', {
       error
     });
+    done(error, false);
   }
 }));
 
@@ -89,14 +93,19 @@ module.exports.signUser = async (user) => {
     id: user.id,
     name: user.name,
     email: user.email,
+    isAdmin: user.isAdmin,
     token: await promisify(jwt.sign)({
       id: user.id
     }, TOKEN_SECRET)
   };
 };
 
-module.exports.verifyAuthed = () => {
-  return passport.authenticate('user', {
-    session: false
-  });
+module.exports.verifyAuthed = (forceAdmin = false) => {
+  return (req, res, next) => {
+    req.forceAdmin = forceAdmin;
+
+    passport.authenticate('user', {
+      session: false
+    })(req, res, next);
+  };
 };

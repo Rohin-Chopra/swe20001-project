@@ -11,6 +11,9 @@ import LoginPage from 'pages/LoginPage';
 import SaleAddPage from 'pages/SaleAddPage';
 import SaleEditPage from 'pages/SaleEditPage';
 import SalesPage from 'pages/SalesPage';
+import UserAddPage from 'pages/UserAddPage';
+import UserEditPage from 'pages/UserEditPage';
+import UsersPage from 'pages/UsersPage';
 
 import 'App.scss';
 
@@ -33,6 +36,14 @@ function App() {
                         <Route exact path="/sales" render={() => <SalesPage fetchApi={fetchApi} />} />
                         <Route exact path="/sales/new" render={() => <SaleAddPage fetchApi={fetchApi} />} />
                         <Route exact path="/sales/:id" render={() => <SaleEditPage fetchApi={fetchApi} />} />
+
+                        {user.isAdmin && (
+                          <Switch>
+                            <Route exact path="/users" render={() => <UsersPage fetchApi={fetchApi} user={user} />} />
+                            <Route exact path="/users/new" render={() => <UserAddPage fetchApi={fetchApi} />} />
+                            <Route exact path="/users/:id" render={() => <UserEditPage fetchApi={fetchApi} />} />
+                          </Switch>
+                        )}
                       </Switch>
                     ) : (
                       <Switch>

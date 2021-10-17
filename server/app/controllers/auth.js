@@ -24,6 +24,7 @@ module.exports.verify = asyncHandler(async (req, res, next) => {
   const user = await User.findById(decoded.id)
   if (!user) {
     console.warn('refused to verify user, token is invalid');
+    res.sendStatus(401);
     return;
   }
 
